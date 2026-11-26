@@ -40,6 +40,7 @@ dependencies:
   # Progress save — stars, coins, unlocks phone mein.
   shared_preferences: ^2.3.0
   flame_audio: ^2.12.2
+  google_mobile_ads: ^9.2.0
 
 dev_dependencies:
   flutter_test:
