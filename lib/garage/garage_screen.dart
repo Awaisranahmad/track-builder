@@ -32,6 +32,11 @@ class _GarageScreenState extends State<GarageScreen> {
   PlayerProgress get _progress => widget.progress;
 
   Future<void> _buy(CarData car) async {
+    // Master Builder khareedi nahi ja sakti — sirf Level 96 jeetne par milti hai.
+    if (car.unlockLevelId > 0 &&
+        _progress.starsForLevel(car.unlockLevelId) == 0) {
+      return;
+    }
     final bought = _progress.buyCar(
       carId: car.id,
       priceCoins: car.priceCoins,
@@ -141,6 +146,9 @@ class _GarageScreenState extends State<GarageScreen> {
           final owned = _progress.ownedCars.contains(car.id);
           final selected = _progress.selectedCarId == car.id;
           final afford = _progress.totalCoins >= car.priceCoins;
+          // Master Builder locked hai jab tak Level 96 jeeta na ho.
+          final locked = car.unlockLevelId > 0 &&
+              _progress.starsForLevel(car.unlockLevelId) == 0;
           return Card(
             color: selected ? Colors.green[50] : null,
             margin: const EdgeInsets.only(bottom: 12),
@@ -183,7 +191,12 @@ class _GarageScreenState extends State<GarageScreen> {
                   _statBar('Grip', car.grip),
                   _statBar('Stability', car.stability),
                   const SizedBox(height: 12),
-                  if (!owned)
+                  if (locked)
+                    const Text(
+                      '🔒 Level 96 jeetne par milegi.',
+                      style: TextStyle(color: Colors.grey),
+                    )
+                  else if (!owned)
                     ElevatedButton.icon(
                       onPressed: afford ? () => _buy(car) : null,
                       icon: const Icon(Icons.monetization_on),
