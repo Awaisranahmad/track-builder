@@ -44,7 +44,15 @@ class BuildManager {
     final center = _snapCenter(type, worldPos);
     if (!_inBounds(center, type)) return null;
 
-    final piece = TrackPiece(type: type, pieceCenter: center);
+    final piece = TrackPiece(
+      type: type,
+      pieceCenter: center,
+      surface: level.surface,
+      // Bridge-break hazard (L34) — sirf bridge par, level data se.
+      breakAfterSeconds: type == PieceType.bridge
+          ? level.bridgeBreakSeconds
+          : null,
+    );
     _placed.add(piece);
     _remaining[type] = remainingCount(type) - 1;
     onPieceAdded(piece);
@@ -95,10 +103,13 @@ class BuildManager {
   }
 
   /// Tap point se piece ka centre nikalo — grid snapping.
-  /// Road: top-left cell par snap, taake zameen se flush baithe.
+  /// Road, Bridge aur Booster: top-left cell par snap, taake zameen se flush baithe.
   /// Ramp: centre 0.5 grid par snap.
-  Vector2 _snapCenter(PieceType type, Vector2 point) {
-    if (type == PieceType.road) {
+  /// Static taake HintManager (ghost solution) wahi centre nikal sake.
+  static Vector2 snapCenterFor(PieceType type, Vector2 point) {
+    if (type == PieceType.road ||
+        type == PieceType.bridge ||
+        type == PieceType.booster) {
       final cellX = point.x.floorToDouble();
       final cellY = point.y.floorToDouble();
       return Vector2(cellX + type.length / 2, cellY + type.thickness / 2);
@@ -108,6 +119,9 @@ class BuildManager {
       (point.y * 2).roundToDouble() / 2,
     );
   }
+
+  Vector2 _snapCenter(PieceType type, Vector2 point) =>
+      snapCenterFor(type, point);
 
   bool _inBounds(Vector2 center, PieceType type) {
     final half = type.length / 2;
