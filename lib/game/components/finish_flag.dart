@@ -1,9 +1,11 @@
 // Finish flag — sensor zone: gari andar aaye to level complete.
-// Chequered flag chhote squares se bana hai (prototype, koi image nahi).
+// Phase 4: checkered flag sprite — load na ho to purane squares.
+import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/constants.dart';
+import '../../services/sprite_service.dart';
 import 'car.dart';
 
 class FinishFlagComponent extends BodyComponent with ContactCallbacks {
@@ -18,6 +20,15 @@ class FinishFlagComponent extends BodyComponent with ContactCallbacks {
   final void Function() onFinished;
 
   bool _triggered = false;
+
+  /// Phase 4 sprite — load na ho to null, phir squares.
+  Sprite? _sprite;
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    _sprite = await SpriteService.load(SpritePaths.flag);
+  }
 
   final _polePaint = Paint()
     ..color = Colors.white
@@ -68,6 +79,16 @@ class FinishFlagComponent extends BodyComponent with ContactCallbacks {
       const Offset(0, -poleHeight / 2),
       _polePaint,
     );
+    // Flag — sprite ho to image, warna chequered squares.
+    final sprite = _sprite;
+    if (sprite != null) {
+      sprite.render(
+        canvas,
+        position: Vector2(0, -poleHeight / 2),
+        size: Vector2(1.0, 0.5),
+      );
+      return;
+    }
     // Chequered flag — 4x2 squares, pole ke upar.
     const square = 0.25;
     for (var row = 0; row < 2; row++) {
