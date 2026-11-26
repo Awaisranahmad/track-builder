@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import '../../core/constants.dart';
 
 /// Saare 8 pieces — design doc page 3 ke mutabiq.
-/// Phase 1 mein sirf road aur ramp ke components bane hain;
-/// baaki pieces Phase 2-5 mein aayenge, lekin un ka data abhi se tay hai.
+/// Phase 2 se road, ramp aur bridge ke components bane hain;
+/// baaki pieces Phase 3-5 mein aayenge, lekin un ka data abhi se tay hai.
 enum PieceType {
   road,
   ramp,
@@ -48,7 +48,7 @@ extension PieceTypeInfo on PieceType {
       case PieceType.ramp:
         return PieceValues.rampLength;
       case PieceType.bridge:
-        return 4.0;
+        return PieceValues.bridgeLength;
       case PieceType.booster:
         return 1.0;
       case PieceType.loop:
@@ -69,6 +69,8 @@ extension PieceTypeInfo on PieceType {
         return PieceValues.roadThickness;
       case PieceType.ramp:
         return PieceValues.rampThickness;
+      case PieceType.bridge:
+        return PieceValues.bridgeThickness;
       default:
         return 0.3;
     }
@@ -118,11 +120,14 @@ extension PieceTypeInfo on PieceType {
     }
   }
 
-  /// Kya is piece ka component Phase 1 mein bana hua hai?
+  /// Kya is piece ka component bana hua hai?
+  /// Phase 3 se road, ramp, bridge aur booster — baaki Phase 4-5 mein.
   bool get isImplemented {
     switch (this) {
       case PieceType.road:
       case PieceType.ramp:
+      case PieceType.bridge:
+      case PieceType.booster:
         return true;
       default:
         return false;

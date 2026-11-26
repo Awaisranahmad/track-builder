@@ -1,5 +1,6 @@
 // Level ka data model — har level sirf ye data hai, code nahi.
 // Design rule 3: level ka data kabhi game code mein hardcode nahi hoga.
+import '../../core/constants.dart';
 import 'piece_type.dart';
 
 /// Zameen ka fixed hissa — jo hissa player nahi banata.
@@ -39,8 +40,51 @@ class CoinData {
   final double y;
 }
 
-/// Zameen ki surface — friction tay karti hai.
-enum SurfaceType { normal, sand, ice }
+/// Hazard ki qisam — Phase 4/5: level mein timed khatra.
+enum HazardType {
+  /// Bridge gari ke touch ke itne second baad toot jata hai (L34 Thin Ice).
+  bridgeBreak,
+
+  /// Barf ka gola dhalwan se ludhakta hua raasta kaatta hai (L35).
+  snowball,
+}
+
+/// Ek hazard — level data mein, sirf data hai (design rule 3).
+class LevelHazard {
+  /// Bridge-break hazard — [afterSeconds] gari ke touch ke baad tootne ka waqt.
+  const LevelHazard.bridgeBreak({required this.afterSeconds})
+      : type = HazardType.bridgeBreak,
+        x = 0,
+        y = 0,
+        intervalSeconds = 0,
+        firstAfterSeconds = 0;
+
+  /// Snowball hazard — [x], [y] spawn point (upar, dhalwan ke upar),
+  /// [firstAfterSeconds] pehle gole ka waqt (GO ke baad), phir har
+  /// [intervalSeconds] par ek naya gola.
+  const LevelHazard.snowball({
+    required this.x,
+    required this.y,
+    this.intervalSeconds = 4.0,
+    this.firstAfterSeconds = 2.5,
+  }) : type = HazardType.snowball,
+       afterSeconds = 0;
+
+  final HazardType type;
+
+  /// Bridge-break: tootne ka waqt (seconds).
+  final double afterSeconds;
+
+  /// Snowball: spawn point (metre).
+  final double x;
+  final double y;
+
+  /// Snowball: gole ke beech waqfa (seconds).
+  final double intervalSeconds;
+
+  /// Snowball: pehla gola GO ke kitne second baad.
+  final double firstAfterSeconds;
+}
 
 /// Poore level ki definition — ek record, koi code nahi.
 class LevelData {
@@ -58,6 +102,7 @@ class LevelData {
     required this.goldTimeSeconds,
     this.surface = SurfaceType.normal,
     this.waterZones = const [],
+    this.hazards = const [],
   });
 
   /// Global number (1-96).
@@ -94,6 +139,28 @@ class LevelData {
 
   /// Paani wale hisse — girna = fail. Har zone: x, width.
   final List<({double x, double width})> waterZones;
+
+  /// Hazards — bridge-break, snowball waghera (Phase 4/5).
+  /// Fairness rule (level design doc): har hazard GO se pehle dikhta hai.
+  final List<LevelHazard> hazards;
+
+  /// Bridge-break hazard ho to us ka waqt, warna null.
+  double? get bridgeBreakSeconds {
+    for (final hazard in hazards) {
+      if (hazard.type == HazardType.bridgeBreak) {
+        return hazard.afterSeconds;
+      }
+    }
+    return null;
+  }
+
+  /// Snowball hazard ho to wo, warna null.
+  LevelHazard? get snowballHazard {
+    for (final hazard in hazards) {
+      if (hazard.type == HazardType.snowball) return hazard;
+    }
+    return null;
+  }
 
   /// Tray mein is piece ki kul tadad.
   int trayCount(PieceType type) {
@@ -152,6 +219,29 @@ class LevelData {
       final c = coins[i];
       if (c.x < 0 || c.x > worldWidth || c.y < 0 || c.y > worldHeight) {
         errors.add('coin $i duniya se bahar hai (${c.x}, ${c.y})');
+      }
+    }
+
+    // Hazards valid hon.
+    for (final hazard in hazards) {
+      switch (hazard.type) {
+        case HazardType.bridgeBreak:
+          if (hazard.afterSeconds <= 0) {
+            errors.add('bridgeBreak ka afterSeconds positive hona chahiye');
+          }
+          if (trayCount(PieceType.bridge) == 0) {
+            errors.add('bridgeBreak hazard hai lekin tray mein bridge nahi');
+          }
+        case HazardType.snowball:
+          if (hazard.x < 0 || hazard.x > worldWidth) {
+            errors.add('snowball spawn x duniya se bahar hai');
+          }
+          if (hazard.y < 0 || hazard.y > worldHeight) {
+            errors.add('snowball spawn y duniya se bahar hai');
+          }
+          if (hazard.intervalSeconds <= 0) {
+            errors.add('snowball intervalSeconds positive hona chahiye');
+          }
       }
     }
 

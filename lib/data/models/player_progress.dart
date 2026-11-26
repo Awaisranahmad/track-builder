@@ -1,5 +1,7 @@
 // Player ki progress — stars, coins, unlocks.
 // Yehi poora model save hota hai (shared_preferences mein JSON).
+import '../../core/constants.dart';
+
 class PlayerProgress {
   PlayerProgress({
     Map<int, int>? starsPerLevel,
@@ -9,6 +11,8 @@ class PlayerProgress {
     Set<String>? ownedCars,
     this.musicOn = true,
     this.sfxOn = true,
+    this.hints = HintValues.startingHints,
+    this.hintsUsed = 0,
   })  : starsPerLevel = starsPerLevel ?? {},
         unlockedLevels = unlockedLevels ?? {1},
         ownedCars = ownedCars ?? {'starter_bug'};
@@ -30,6 +34,13 @@ class PlayerProgress {
 
   bool musicOn;
   bool sfxOn;
+
+  /// Baaki hue hints — ghost solution dikhane ke liye.
+  /// Shuru mein 3 free; rewarded ad se +1 milta hai.
+  int hints;
+
+  /// Kul istemal hue hints — design doc ka model field.
+  int hintsUsed;
 
   /// Kul stars — saare levels ka total.
   int get totalStars {
@@ -77,6 +88,65 @@ class PlayerProgress {
     return stars >= starsNeeded;
   }
 
+  /// Gari khareedo — coins kaafi hon aur pehle se owned na ho to true.
+  /// Coins kaat liye jate hain, gari owned mein aa jati hai.
+  bool buyCar({required String carId, required int priceCoins}) {
+    if (ownedCars.contains(carId)) return false;
+    if (totalCoins < priceCoins) return false;
+    totalCoins -= priceCoins;
+    ownedCars.add(carId);
+    return true;
+  }
+
+  /// Hint istemal karo — baaki hon to ek kaat lo, warna false.
+  bool useHint() {
+    if (hints <= 0) return false;
+    hints--;
+    hintsUsed++;
+    return true;
+  }
+
+  /// Rewarded ad se hint mila — ek hint jama karo.
+  void grantHint() {
+    hints++;
+  }
+
+  /// Coins jama karo — level reward ya rewarded ad se.
+  void addCoins(int amount) {
+    if (amount <= 0) return;
+    totalCoins += amount;
+  }
+
+  /// Level skip (rewarded ad) — agla level khol do, bina stars ke.
+  void skipLevel(int levelId) {
+    unlockedLevels.add(levelId + 1);
+  }
+
+  /// Owned gari select karo — na ho to false.
+  bool selectCar(String carId) {
+    if (!ownedCars.contains(carId)) return false;
+    selectedCarId = carId;
+    return true;
+  }
+
+  /// Progress reset karo — Settings mein confirm ke saath.
+  /// In-memory object bhi fresh ho jata hai (save ke baad file bhi).
+  void reset() {
+    starsPerLevel.clear();
+    totalCoins = 0;
+    unlockedLevels
+      ..clear()
+      ..add(1);
+    selectedCarId = 'starter_bug';
+    ownedCars
+      ..clear()
+      ..add('starter_bug');
+    musicOn = true;
+    sfxOn = true;
+    hints = HintValues.startingHints;
+    hintsUsed = 0;
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'starsPerLevel': starsPerLevel.map(
@@ -88,6 +158,8 @@ class PlayerProgress {
       'ownedCars': ownedCars.toList(),
       'musicOn': musicOn,
       'sfxOn': sfxOn,
+      'hints': hints,
+      'hintsUsed': hintsUsed,
     };
   }
 
@@ -109,6 +181,8 @@ class PlayerProgress {
           .toSet(),
       musicOn: json['musicOn'] as bool? ?? true,
       sfxOn: json['sfxOn'] as bool? ?? true,
+      hints: (json['hints'] as num?)?.toInt() ?? HintValues.startingHints,
+      hintsUsed: (json['hintsUsed'] as num?)?.toInt() ?? 0,
     );
   }
 }
