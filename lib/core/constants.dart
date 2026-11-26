@@ -33,6 +33,12 @@ class PhysicsValues {
   /// Motor ki taqat — zyada torque = taiz acceleration.
   static const double maxMotorTorque = 25.0;
 
+  /// Booster pad ki raftaar — car is se tez nahi, is se kam ho to
+  /// itni kar di jati hai (metre/second). 7.5 m/s se 30° ramp
+  /// ~5m aage utarta hai aur 6m gap paar karta hai (playtest se tune hua).
+  /// 6.5 par landing gap ke kinare par hoti thi — gari peeche gir jati thi.
+  static const double boosterTargetSpeed = 7.5;
+
   /// Wheel joint ki suspension.
   static const double suspensionFrequencyHz = 4.0;
   static const double suspensionDampingRatio = 0.7;
@@ -53,6 +59,54 @@ class CarValues {
   static const double wheelOffsetX = 0.45;
   static const double wheelOffsetY = 0.28;
 }
+
+/// Zameen ki surface — friction tay karti hai.
+/// LevelData mein istemal hota hai; values SurfaceValues mein hain.
+enum SurfaceType { normal, sand, ice }
+
+/// Zameen ki surface ki physics — LevelData.surface se aati hai.
+/// normal: Green Hills. sand: Desert (motor halka slow).
+/// ice: Snow Peaks (grip kam — brake lambi, jump chhote).
+class SurfaceValues {
+  /// Terrain fixture ki friction.
+  /// Ice 0.55 hai (0.15 nahi) — itni kam friction par gari 30° ramp
+  /// par charh nahi sakti (traction < gravity component). 0.55 par
+  /// combined friction ~0.67 hoti hai — brake lambi rehti hai lekin
+  /// ramp climb ho jata hai (playtest se tune hua).
+  static double terrainFriction(SurfaceType surface) {
+    switch (surface) {
+      case SurfaceType.normal:
+        return 0.8;
+      case SurfaceType.sand:
+        return 1.0;
+      case SurfaceType.ice:
+        return 0.55;
+    }
+  }
+
+  /// Wheel friction ka multiplier (CarValues.wheelFriction par lagta hai).
+  static double wheelFrictionMultiplier(SurfaceType surface) {
+    switch (surface) {
+      case SurfaceType.normal:
+        return 1.0;
+      case SurfaceType.sand:
+        return 1.0;
+      case SurfaceType.ice:
+        return 0.9;
+    }
+  }
+
+  /// Motor speed ka multiplier — ret mein gari halki slow chalti hai.
+  static double motorMultiplier(SurfaceType surface) {
+    switch (surface) {
+      case SurfaceType.normal:
+        return 1.0;
+      case SurfaceType.sand:
+        return 0.8;
+      case SurfaceType.ice:
+        return 1.0;
+    }
+  }}
 
 /// Drive phase ke fail rules.
 class DriveRules {
@@ -79,6 +133,10 @@ class PieceValues {
 
   static const double rampLength = 2.5;
   static const double rampThickness = 0.3;
+
+  /// Bridge ki lambai — road se dugni, chauda gap cover karta hai.
+  static const double bridgeLength = 4.0;
+  static const double bridgeThickness = 0.3;
 
   /// Ramp ka default angle — degree mein, upar ki taraf.
   static const double rampDefaultAngleDegrees = 30.0;
@@ -114,6 +172,64 @@ class GameColors {
   static const Color ramp = Color(0xFFFF9800);
   static const Color coin = Color(0xFFFFD600);
   static const Color finish = Color(0xFF000000);
+  // World 2 — Desert Dunes: ret aur garm aasman.
+  static const Color desertSky = Color(0xFFFFE0B2);
+  static const Color sand = Color(0xFFEDC987);
+  static const Color sandDirt = Color(0xFFD9A45B);
+  static const Color dune = Color(0xFFF0C078);
+  // World 3 — Snow Peaks: barf aur halka neela aasman.
+  static const Color snowSky = Color(0xFFD6ECF5);
+  static const Color snow = Color(0xFFF4FAFD);
+  static const Color snowDirt = Color(0xFFB9D3E0);
+  static const Color snowHill = Color(0xFFFFFFFF);
   static const Color ghostValid = Color(0x8800E676);
   static const Color ghostInvalid = Color(0x88E53935);
+}
+
+/// Ads ki values — design doc §6 system 8 (Ads / Earning).
+/// Rule: drive ke beech mein kabhi ad nahi; interstitial sirf fail ke
+/// baad, har 3rd fail par; rewarded hint / coins / skip ke liye.
+class AdsValues {
+  /// Interstitial kitne fails ke baad — har 3rd fail par.
+  static const int interstitialEveryNFails = 3;
+
+  /// Do interstitials ke beech kam az kam waqfa (seconds).
+  static const int interstitialCooldownSeconds = 60;
+
+  /// Rewarded ad dekhne par kitne coins (Garage mein).
+  static const int rewardedCoinsAmount = 50;
+
+  /// Do rewarded ads ke beech kam az kam waqfa (seconds).
+  static const int rewardedCooldownSeconds = 30;
+}
+
+/// Hints ki values — rewarded ad se hint milta hai, ghost solution dikhta hai.
+class HintValues {
+  /// Shuru mein kitne free hints milte hain.
+  static const int startingHints = 3;
+
+  /// Ghost solution kitni der dikhe (seconds).
+  static const double ghostVisibleSeconds = 6.0;
+}
+
+/// Particles / effects ki values — design doc §6, effects manager.
+class EffectsValues {
+  /// Coin collect par kitne sparks.
+  static const int coinSparkCount = 12;
+
+  /// Crash par kitne smoke puffs.
+  static const int crashSmokeCount = 10;
+
+  /// Win par kitne confetti pieces.
+  static const int winConfettiCount = 40;
+
+  /// Booster flame — kitne particles, kitni der.
+  static const int boostFlameCount = 8;
+
+  /// Camera shake kitni der (seconds) aur kitna (metre).
+  static const double shakeDurationSeconds = 0.35;
+  static const double shakeAmountMetres = 0.12;
+
+  /// Crash shake thoda zyada.
+  static const double crashShakeAmountMetres = 0.2;
 }
