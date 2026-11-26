@@ -144,6 +144,7 @@ class TrackBuilderGame extends Forge2DGame
 
   /// onLoad mukammal hua ya nahi — tests is se load ka intezar karte hain
   /// (sprite load async hai, ek pump kaafi nahi).
+  @override
   bool isLoaded = false;
 
   @override
