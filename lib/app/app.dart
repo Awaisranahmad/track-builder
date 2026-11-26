@@ -1,11 +1,18 @@
 // App — MaterialApp aur routes.
+// Routes: '/' Home, '/worlds' World Map, '/levels' Level Select
+// (arguments: world id), '/game' Game Screen (arguments: level id),
+// '/garage' Garage, '/settings' Settings.
 import 'package:flutter/material.dart';
 
-import '../data/levels/world1_levels.dart';
+import '../data/levels/worlds.dart';
 import '../data/models/player_progress.dart';
 import '../data/save_service.dart';
+import '../garage/garage_screen.dart';
 import '../ui/screens/game_screen.dart';
 import '../ui/screens/home_screen.dart';
+import '../ui/screens/level_select_screen.dart';
+import '../ui/screens/settings_screen.dart';
+import '../ui/screens/world_map_screen.dart';
 
 class TrackBuilderApp extends StatelessWidget {
   const TrackBuilderApp({
@@ -30,6 +37,40 @@ class TrackBuilderApp extends StatelessWidget {
         if (settings.name == '/') {
           return MaterialPageRoute(
             builder: (_) => HomeScreen(
+              progress: progress,
+              saveService: saveService,
+            ),
+          );
+        }
+        if (settings.name == '/worlds') {
+          return MaterialPageRoute(
+            builder: (_) => WorldMapScreen(
+              progress: progress,
+              saveService: saveService,
+            ),
+          );
+        }
+        if (settings.name == '/garage') {
+          return MaterialPageRoute(
+            builder: (_) => GarageScreen(
+              progress: progress,
+              saveService: saveService,
+            ),
+          );
+        }
+        if (settings.name == '/settings') {
+          return MaterialPageRoute(
+            builder: (_) => SettingsScreen(
+              progress: progress,
+              saveService: saveService,
+            ),
+          );
+        }
+        if (settings.name == '/levels') {
+          final worldId = settings.arguments as int;
+          return MaterialPageRoute(
+            builder: (_) => LevelSelectScreen(
+              worldId: worldId,
               progress: progress,
               saveService: saveService,
             ),
