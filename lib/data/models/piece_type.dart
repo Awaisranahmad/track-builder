@@ -52,7 +52,7 @@ extension PieceTypeInfo on PieceType {
       case PieceType.booster:
         return 1.0;
       case PieceType.loop:
-        return 2.0;
+        return 4.5;
       case PieceType.spring:
         return 1.0;
       case PieceType.seesaw:
@@ -121,16 +121,9 @@ extension PieceTypeInfo on PieceType {
   }
 
   /// Kya is piece ka component bana hua hai?
-  /// Phase 3 se road, ramp, bridge aur booster — baaki Phase 4-5 mein.
+  /// Phase 5 se saare 8 pieces — road, ramp, bridge, booster,
+  /// loop, spring, see-saw aur magnet.
   bool get isImplemented {
-    switch (this) {
-      case PieceType.road:
-      case PieceType.ramp:
-      case PieceType.bridge:
-      case PieceType.booster:
-        return true;
-      default:
-        return false;
-    }
+    return true;
   }
 }

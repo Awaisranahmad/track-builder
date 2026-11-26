@@ -74,7 +74,31 @@ class PlayerProgress {
       unlockedLevels.add(levelId + 1);
     }
 
+    // Level 96 jeeta — Master Builder gari mil gayi.
+    if (levelId == 96 && stars >= 1) {
+      ownedCars.add('master_builder');
+    }
+
     return newStars - oldStars;
+  }
+
+  /// Is world mein 36/36 stars hain — golden paint unlocked.
+  /// World completion (design doc page 14) — world map par sunheri nishani.
+  bool isWorldGolden(int world) {
+    final firstLevel = (world - 1) * 12 + 1;
+    for (var i = 0; i < 12; i++) {
+      if (starsForLevel(firstLevel + i) < 3) return false;
+    }
+    return true;
+  }
+
+  /// Kitne worlds golden hain (36/36 stars).
+  int get goldenWorldsCount {
+    var count = 0;
+    for (var world = 1; world <= 8; world++) {
+      if (isWorldGolden(world)) count++;
+    }
+    return count;
   }
 
   /// Agla world khulta hai jab pichle world mein 20+ stars hon.

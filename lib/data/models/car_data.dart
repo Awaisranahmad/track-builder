@@ -10,6 +10,7 @@ class CarData {
     required this.grip,
     required this.stability,
     required this.description,
+    this.unlockLevelId = 0,
   });
 
   final String id;
@@ -25,6 +26,10 @@ class CarData {
 
   /// Garage mein dikhane wali ek line.
   final String description;
+
+  /// Is level ko jeetne par milti hai (0 matlab koi shart nahi).
+  /// Master Builder sirf Level 96 jeetne par milti hai — khareedi nahi ja sakti.
+  final int unlockLevelId;
 
   bool get isFree => priceCoins == 0;
 
@@ -96,6 +101,19 @@ const CarData rocketVan = CarData(
   description: 'Bari aur wobbly — dekhne mein mazahiya.',
 );
 
+/// Master Builder — Level 96 (finale) jeetne par milti hai.
+/// Khareedi nahi ja sakti. Balanced, sunheri paint.
+const CarData masterBuilder = CarData(
+  id: 'master_builder',
+  name: 'Master Builder',
+  priceCoins: 0,
+  speed: 7,
+  grip: 7,
+  stability: 7,
+  description: 'Level 96 jeetne par mili — finale ki gari.',
+  unlockLevelId: 96,
+);
+
 /// Saari gariyan — Garage isi list se banta hai.
 const List<CarData> allCars = [
   starterBug,
@@ -103,6 +121,7 @@ const List<CarData> allCars = [
   snowRally,
   cityRacer,
   rocketVan,
+  masterBuilder,
 ];
 
 /// Car id se dhoondho — na mile to null.
