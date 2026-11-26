@@ -61,12 +61,19 @@ class DriveManager {
     if (finished || failed) return;
     elapsed += dt;
 
-    // Ulta ho gaya?
-    if (car.angle.abs() > DriveRules.flipAngleRadians) {
-      _flipTimer += dt;
-      if (_flipTimer >= DriveRules.flipHoldSeconds) {
-        _fail('flip');
-        return;
+    // Ulta ho gaya? (Loop ke andar flip check nahi hota — wahan ulta
+    // hona hi maqsad hai. Angle wrap kiya jata hai taake poora loop
+    // ghumne ke baad gari seedhi gini jaye.)
+    if (!car.isInLoop) {
+      final wrapped = _wrapAngle(car.angle);
+      if (wrapped.abs() > DriveRules.flipAngleRadians) {
+        _flipTimer += dt;
+        if (_flipTimer >= DriveRules.flipHoldSeconds) {
+          _fail('flip');
+          return;
+        }
+      } else {
+        _flipTimer = 0;
       }
     } else {
       _flipTimer = 0;
@@ -105,6 +112,21 @@ class DriveManager {
   void _fail(String reason) {
     failed = true;
     failReason = reason;
+  }
+
+  /// Bahar se fail — lava ya geyser chhoone par (game bulata hai).
+  void fail(String reason) {
+    if (finished || failed) return;
+    _fail(reason);
+  }
+
+  /// Angle ko -π..π mein lao.
+  static double _wrapAngle(double angle) {
+    const twoPi = 2 * 3.141592653589793;
+    var wrapped = angle % twoPi;
+    if (wrapped > 3.141592653589793) wrapped -= twoPi;
+    if (wrapped < -3.141592653589793) wrapped += twoPi;
+    return wrapped;
   }
 
   /// Stars gino: finish = 1, saare coins = 1, gold time + no crash = 1.

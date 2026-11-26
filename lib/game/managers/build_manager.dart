@@ -52,6 +52,8 @@ class BuildManager {
       breakAfterSeconds: type == PieceType.bridge
           ? level.bridgeBreakSeconds
           : null,
+      // Sinking-bridge hazard (L74) — sirf bridge par, level data se.
+      sinkRate: type == PieceType.bridge ? level.sinkingBridgeRate : null,
     );
     _placed.add(piece);
     _remaining[type] = remainingCount(type) - 1;
@@ -103,13 +105,16 @@ class BuildManager {
   }
 
   /// Tap point se piece ka centre nikalo — grid snapping.
-  /// Road, Bridge aur Booster: top-left cell par snap, taake zameen se flush baithe.
-  /// Ramp: centre 0.5 grid par snap.
+  /// Road, Bridge, Booster, Spring aur See-Saw: top-left cell par snap,
+  /// taake zameen se flush baithe.
+  /// Ramp, Loop aur Magnet: centre 0.5 grid par snap.
   /// Static taake HintManager (ghost solution) wahi centre nikal sake.
   static Vector2 snapCenterFor(PieceType type, Vector2 point) {
     if (type == PieceType.road ||
         type == PieceType.bridge ||
-        type == PieceType.booster) {
+        type == PieceType.booster ||
+        type == PieceType.spring ||
+        type == PieceType.seesaw) {
       final cellX = point.x.floorToDouble();
       final cellY = point.y.floorToDouble();
       return Vector2(cellX + type.length / 2, cellY + type.thickness / 2);
