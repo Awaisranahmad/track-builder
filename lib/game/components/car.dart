@@ -57,6 +57,22 @@ class Car extends Component {
   /// boosted gari ko wapas 3 m/s par brake kar deta hai.
   double _boostTimer = 0;
 
+  /// Magnet / Zero-G zone ke andar kitne zones active hain —
+  /// ek se zyada zones overlap kar sakte hain.
+  int _magnetZoneCount = 0;
+
+  /// Loop ring ke andar hai ya nahi — flip check is waqt rukta hai.
+  int _loopZoneCount = 0;
+
+  /// Loop se bahar nikle to angle normalize karna hai (agli update mein).
+  bool _pendingNormalize = false;
+
+  /// Magnet zone ke andar hai — gravity kam hoti hai.
+  bool get isInMagnetZone => _magnetZoneCount > 0;
+
+  /// Loop ring ke andar hai.
+  bool get isInLoop => _loopZoneCount > 0;
+
   /// Boost ke dauran motor ki speed (rad/s) — ~7.5 m/s.
   static const double _boostMotorSpeed = 22.0;
 
@@ -171,6 +187,9 @@ class Car extends Component {
   void resetToStart() {
     _freeze();
     _boostTimer = 0;
+    _magnetZoneCount = 0;
+    _loopZoneCount = 0;
+    _pendingNormalize = false;
     _gasOn = false;
     _brakeOn = false;
     _chassis.setTransform(startPosition, 0);
@@ -240,6 +259,22 @@ class Car extends Component {
         _refreshMotorSpeed();
       }
     }
+    // Magnet zone mein gravity kam — bahar aate hi wapas normal.
+    // (DriveManager ka flip check is se mutasir nahi hota.)
+    if (_active) {
+      final scale = _magnetZoneCount > 0
+          ? MagnetValues.gravityScale
+          : 1.0;
+      for (final body in [_chassis, _frontWheel, _rearWheel]) {
+        body.gravityScale = Vector2(scale, scale);
+      }
+    }
+    // Loop se bahar nikle — angle normalize (contact callback mein
+    // world locked hota hai, is liye yahan karte hain).
+    if (_pendingNormalize) {
+      _pendingNormalize = false;
+      normalizeAngle();
+    }
   }
 
   /// Booster pad se takrao — car ki raftaar target tak barhao.
@@ -264,6 +299,57 @@ class Car extends Component {
   void applyImpulse(Vector2 impulse) {
     if (!_active) return;
     _chassis.applyLinearImpulse(impulse);
+  }
+
+  /// Hawa (wind) ka dhakka — har frame lagta hai, gust ke dauran.
+  /// Sirf drive phase mein, aur sirf active gari par.
+  void applyForce(Vector2 force) {
+    if (!_active) return;
+    _chassis.applyForce(force);
+  }
+
+  /// Spring Pad se bounce — seedha upar launch, horizontal raftaar waisi hi.
+  /// Sirf drive phase mein, aur sirf active gari par.
+  void launchUp(double velocityY) {
+    if (!_active) return;
+    for (final body in [_chassis, _frontWheel, _rearWheel]) {
+      final velocity = body.linearVelocity;
+      body.linearVelocity = Vector2(velocity.x, -velocityY);
+    }
+  }
+
+  /// Magnet zone mein dakhil / bahar — counter se overlap handle hota hai.
+  void setInMagnetZone(bool inside) {
+    if (inside) {
+      _magnetZoneCount++;
+    } else if (_magnetZoneCount > 0) {
+      _magnetZoneCount--;
+    }
+  }
+
+  /// Loop ring mein dakhil / bahar — flip check is waqt rukta hai.
+  /// Bahar nikalte hi angle normalize ho jata hai (poora loop = 2π ≡ 0),
+  /// taake DriveManager gari ko ulta na samjhe. Normalize update()
+  /// mein hoti hai — contact callback ke andar world locked hota hai,
+  /// is liye wahan setTransform nahi kar sakte.
+  void setInLoop(bool inside) {
+    if (inside) {
+      _loopZoneCount++;
+    } else if (_loopZoneCount > 0) {
+      _loopZoneCount--;
+      if (_loopZoneCount == 0) _pendingNormalize = true;
+    }
+  }
+
+  /// Angle ko -π..π mein lao — poora loop ghumne ke baad angle ~2π
+  /// ho jata hai; normalize karne se gari phir seedhi gini jati hai.
+  void normalizeAngle() {
+    final angle = _chassis.angle;
+    const twoPi = 2 * 3.141592653589793;
+    var wrapped = angle % twoPi;
+    if (wrapped > 3.141592653589793) wrapped -= twoPi;
+    if (wrapped < -3.141592653589793) wrapped += twoPi;
+    _chassis.setTransform(_chassis.position, wrapped);
   }
 
   /// Gari ki raftaar (metre/second).

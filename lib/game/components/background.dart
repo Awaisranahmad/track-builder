@@ -32,6 +32,16 @@ class BackgroundComponent extends PositionComponent {
         return Paint()..color = GameColors.desertSky;
       case 3:
         return Paint()..color = GameColors.snowSky;
+      case 4:
+        return Paint()..color = GameColors.nightSky;
+      case 5:
+        return Paint()..color = GameColors.jungleSky;
+      case 6:
+        return Paint()..color = GameColors.spaceSky;
+      case 7:
+        return Paint()..color = GameColors.volcanoSky;
+      case 8:
+        return Paint()..color = GameColors.skyIslandsSky;
       default:
         return Paint()..color = GameColors.sky;
     }
@@ -43,6 +53,16 @@ class BackgroundComponent extends PositionComponent {
         return Paint()..color = GameColors.dune;
       case 3:
         return Paint()..color = GameColors.snowHill;
+      case 4:
+        return Paint()..color = GameColors.nightTop;
+      case 5:
+        return Paint()..color = GameColors.jungleTop;
+      case 6:
+        return Paint()..color = GameColors.spaceTop;
+      case 7:
+        return Paint()..color = GameColors.volcanoTop;
+      case 8:
+        return Paint()..color = GameColors.skyIslandsTop;
       default:
         return Paint()..color = const Color(0xFF81C784);
     }
@@ -54,6 +74,16 @@ class BackgroundComponent extends PositionComponent {
         return Paint()..color = const Color(0xFFF7D9A8);
       case 3:
         return Paint()..color = const Color(0xFFE8F4FA);
+      case 4:
+        return Paint()..color = const Color(0xFF2D2D5A);
+      case 5:
+        return Paint()..color = const Color(0xFFA5D6A7);
+      case 6:
+        return Paint()..color = const Color(0xFF1E1E3A);
+      case 7:
+        return Paint()..color = const Color(0xFFFFAB91);
+      case 8:
+        return Paint()..color = const Color(0xFFE1F5FE);
       default:
         return Paint()..color = const Color(0xFFA5D6A7);
     }
