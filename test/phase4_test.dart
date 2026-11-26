@@ -1,7 +1,5 @@
 // Phase 4 tests — sprites, particles/effects, ads, hints, hazards.
 // Har nayi feature ke saath us ka test (design rule 5).
-import 'dart:typed_data';
-
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
