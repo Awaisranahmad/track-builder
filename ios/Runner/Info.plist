@@ -6,6 +6,8 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~3349999999</string>
 	<key>CFBundleDisplayName</key>
 	<string>Track Builder</string>
 	<key>CFBundleExecutable</key>
