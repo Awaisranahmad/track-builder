@@ -182,6 +182,26 @@ class GameColors {
   static const Color snow = Color(0xFFF4FAFD);
   static const Color snowDirt = Color(0xFFB9D3E0);
   static const Color snowHill = Color(0xFFFFFFFF);
+  // World 4 — Night City: gehra neela aasman, neon sheher.
+  static const Color nightSky = Color(0xFF1A1A40);
+  static const Color nightDirt = Color(0xFF2D2D5A);
+  static const Color nightTop = Color(0xFF3D3D7A);
+  // World 5 — Jungle Ruins: gehra sabz, pathar.
+  static const Color jungleSky = Color(0xFFBFE3B4);
+  static const Color jungleDirt = Color(0xFF6D4C41);
+  static const Color jungleTop = Color(0xFF2E7D32);
+  // World 6 — Space Station: kala aasman, sitaray.
+  static const Color spaceSky = Color(0xFF0B0B1E);
+  static const Color spaceDirt = Color(0xFF3A3A55);
+  static const Color spaceTop = Color(0xFF5A5A8A);
+  // World 7 — Volcano: narangi aasman, kala pathar.
+  static const Color volcanoSky = Color(0xFFFFCC80);
+  static const Color volcanoDirt = Color(0xFF4E342E);
+  static const Color volcanoTop = Color(0xFF6D4C41);
+  // World 8 — Sky Islands: halka neela, badal.
+  static const Color skyIslandsSky = Color(0xFFB3E5FC);
+  static const Color skyIslandsDirt = Color(0xFF8D6E63);
+  static const Color skyIslandsTop = Color(0xFFA5D6A7);
   static const Color ghostValid = Color(0x8800E676);
   static const Color ghostInvalid = Color(0x88E53935);
 }
@@ -201,6 +221,17 @@ class AdsValues {
 
   /// Do rewarded ads ke beech kam az kam waqfa (seconds).
   static const int rewardedCooldownSeconds = 30;
+
+  /// AdMob test ad unit IDs (Google ke official test IDs) —
+  /// asal App ID / ad unit IDs aane tak in se wiring test hoti hai.
+  /// Awais ke AdMob account ke asal IDs milne par yahan badlo.
+  static const String testInterstitialAdUnitId =
+      'ca-app-pub-3940256099942544/1033173712';
+  static const String testRewardedAdUnitId =
+      'ca-app-pub-3940256099942544/5224354917';
+
+  /// AdMob App ID (test) — AndroidManifest / Info.plist mein bhi hai.
+  static const String testAppId = 'ca-app-pub-3940256099942544~3349999999';
 }
 
 /// Hints ki values — rewarded ad se hint milta hai, ghost solution dikhta hai.
@@ -232,4 +263,161 @@ class EffectsValues {
 
   /// Crash shake thoda zyada.
   static const double crashShakeAmountMetres = 0.2;
+}
+
+/// Loop piece ki values — Phase 5, World 4 (Night City).
+/// Ring ka radius: booster speed (7.5 m/s) se top par bhi
+/// centripetal force gravity se zyada rehti hai (v²/R = 35 > 10).
+/// Radius 1.6m hai — 1.2m par gari ki pitch bahut tez badalti thi
+/// (probe: entry par 72° in 0.24s, gari ulta ho jati thi).
+/// Gap 60° hai — entry tangent 30° (gentle), chord 1.6m (gari fit hoti hai).
+/// DESIGN (probe se seekha): ChainShape two-sided hoti hai (forge2d ka
+/// collideEdgeAndCircle normal ko circle ki taraf flip karta hai) —
+/// is liye ring ki bahar wali face bhi takrati hai. Gari seedha circle
+/// se takra kar wapas uchhalti hai. Is liye loop mein entry/exit RAMP
+/// hain (30° trapezoid, Ramp piece jaisa): gari ramp par charh kar
+/// circle ke tangent se milti hai, phir circle ke andar chalti hai.
+/// Circle ka centre y=7.0 par hona chahiye (zameen y=9.0) — ramp
+/// usi hisab se banta hai.
+class LoopValues {
+  /// Ring ka radius (metre) — diameter 3.2m.
+  static const double radius = 1.6;
+
+  /// Ring ke neeche khula hissa — is angle (degree) ke andar
+  /// arc nahi hoti (entry/exit ramp wahan milte hain).
+  /// Neeche ka gap: 60° se 120° tak khula (y neeche ki taraf).
+  static const double gapStartDegrees = 30.0; // right gap point — gari zameen par neeche se guzar sake
+  static const double gapEndDegrees = 120.0;
+  /// Arc (ring) shuru hota hai yahan se — gap se bara, taake wheel entry
+  /// pe arc se na takraye. Ramp gapEnd (120 deg) pe khatam hota hai.
+  static const double arcStartDegrees = 150.0;
+
+  /// Arc kitne segments mein banti hai (gap ke bahar).
+  static const int arcSegments = 12;
+
+  /// Arc ki motai (metre).
+  static const double arcThickness = 0.15;
+
+  /// Entry/exit ramp ki motai (metre).
+  static const double rampThickness = 0.3;
+
+  /// Entry/exit ramp ka angle — 30° par gari ramp ki base se
+  /// uchhal kar arc ki bahar wali face se takrati thi (probe se).
+  /// 20° par gari ramp par rehti hai aur gap se andar dakhil hoti hai.
+  static const double rampAngleDegrees = 20.0;
+}
+
+/// Spring Pad ki values — Phase 5, World 5 (Jungle Ruins).
+/// Fixed bounce: launch velocity se ~3.6m uncha bounce (v²/2g).
+class SpringValues {
+  /// Upar ki taraf launch velocity (metre/second).
+  static const double launchVelocity = 8.5;
+
+  /// Pad ki chaudai (metre) — piece length 1.0 se match.
+  static const double padWidth = 1.0;
+}
+
+/// See-Saw ki values — Phase 5, World 6 (Space Station).
+/// Plank pivot par jhulti hai; gari ka wazan use jhukata hai.
+class SeesawValues {
+  /// Plank ki lambai (metre) — piece length 3.0 se match.
+  static const double plankLength = 3.0;
+
+  /// Plank ki motai (metre).
+  static const double plankThickness = 0.3;
+
+  /// Plank ki density — halki, taake gari ke wazan se jhuke.
+  static const double plankDensity = 0.5;
+
+  /// Jhukne ki had (radians) — dono taraf ~26°.
+  static const double maxTiltRadians = 0.45;
+
+  /// Jhukna slow ho — gari ke paar jane ka waqt mile.
+  static const double angularDamping = 1.5;
+}
+
+/// Magnet / Zero-G zone ki values — Phase 5, World 6.
+/// Zone ke andar gravity kam ho jati hai — gari tairti hai.
+class MagnetValues {
+  /// Zone ki chaudai (metre) — piece length 2.0 se match.
+  static const double zoneWidth = 2.0;
+
+  /// Zone ki unchai (metre) — piece centre se upar/neeche.
+  static const double zoneHeight = 5.0;
+
+  /// Zone ke andar gravity ka scale — 0.15x (floaty, slow).
+  static const double gravityScale = 0.15;
+}
+
+/// Lift (moving platform) ki values — Phase 5, World 4.
+class LiftValues {
+  /// Platform ki chaudai (metre).
+  static const double platformWidth = 2.5;
+
+  /// Platform ki motai (metre).
+  static const double platformThickness = 0.3;
+
+  /// Upar/neeche aane-jane ki raftaar (metre/second).
+  static const double speed = 1.0;
+
+  /// Har siray par rukne ka waqt (seconds) — gari charh/utar sake.
+  static const double dwellSeconds = 0.8;
+}
+
+/// Timed gate ki values — Phase 5, World 4/7.
+/// Deewar khulti/band hoti hai — cycle par.
+class GateValues {
+  /// Deewar ki chaudai (metre).
+  static const double wallWidth = 0.3;
+
+  /// Deewar ki unchai (metre) — band ho to rasta poora band.
+  static const double wallHeight = 2.5;
+
+  /// Khulne/band hone mein lagne wala waqt (seconds).
+  static const double transitionSeconds = 0.4;
+}
+
+/// Lava ki values — Phase 5, World 7 (Volcano).
+/// Lava chhoona = foran fail (design doc: lava is an instant fail).
+class LavaValues {
+  /// Rising lava kitni tez upar aata hai (metre/second).
+  static const double riseRate = 0.25;
+}
+
+/// Hawa (wind) ki values — Phase 5, World 8 (Sky Islands).
+/// Gusts gari ko dhakelti hain — flags se timing dikhti hai.
+class WindValues {
+  /// Hawa ki taqat — chassis par force (newton, mass ~1.5).
+  /// 3.0 N se ~2 m/s² acceleration — jump ko halka mod deti hai.
+  static const double pushForce = 3.0;
+}
+
+/// Falling rocks ki values — Phase 5, World 5/7.
+/// Pathar upar se girta hai, gari ko dhakka deta hai.
+class RockValues {
+  /// Pathar ka radius (metre).
+  static const double radius = 0.35;
+
+  /// Zameen par girne ke kitne second baad pathar ghayab ho.
+  static const double despawnAfterSeconds = 2.5;
+
+  /// Gari se takrao par dhakka (impulse) — snowball jaisa.
+  static const double hitImpulseX = -1.2;
+  static const double hitImpulseY = -0.8;
+}
+
+/// Lava geyser ki values — Phase 5, World 7.
+class GeyserValues {
+  /// Geyser column ki chaudai (metre).
+  static const double columnWidth = 0.6;
+}
+
+/// Crumble stone ki values — Phase 5, World 5.
+/// Platform gari ke touch ke itne second baad toot jata hai.
+class CrumbleValues {
+  /// Touch ke baad tootne ka waqt (seconds).
+  static const double breakAfterSeconds = 1.5;
+
+  /// Tootne ke baad fade (seconds).
+  static const double fadeSeconds = 0.4;
 }
