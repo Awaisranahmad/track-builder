@@ -6,7 +6,6 @@
 // Tests mein AudioService(testMode: true) istemal hota hai — kuch nahi bajta.
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flame_audio/flame_audio.dart';
 
 /// App bhar ek hi instance — main.dart mein banata hai.
