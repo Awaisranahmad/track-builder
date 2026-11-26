@@ -7,6 +7,11 @@ import 'package:track_builder/core/constants.dart';
 import 'package:track_builder/data/levels/world1_levels.dart';
 import 'package:track_builder/data/levels/world2_levels.dart';
 import 'package:track_builder/data/levels/world3_levels.dart';
+import 'package:track_builder/data/levels/world4_levels.dart';
+import 'package:track_builder/data/levels/world5_levels.dart';
+import 'package:track_builder/data/levels/world6_levels.dart';
+import 'package:track_builder/data/levels/world7_levels.dart';
+import 'package:track_builder/data/levels/world8_levels.dart';
 import 'package:track_builder/data/levels/worlds.dart';
 import 'package:track_builder/data/models/piece_type.dart';
 
@@ -128,7 +133,13 @@ void main() {
       expect(levelById(13)?.name, 'First Dune');
       expect(levelById(27)?.name, 'Boost!');
       expect(levelById(36)?.name, 'Peaks Exam');
-      expect(levelById(37), isNull);
+      expect(levelById(37)?.name, 'Rooftops');
+      expect(levelById(48)?.name, 'City Exam');
+      expect(levelById(60)?.name, 'Ruins Exam');
+      expect(levelById(72)?.name, 'Station Exam');
+      expect(levelById(84)?.name, 'Volcano Exam');
+      expect(levelById(96)?.name, 'Master Builder');
+      expect(levelById(97), isNull);
       expect(levelById(99), isNull);
     });
 
@@ -369,16 +380,432 @@ void main() {
     });
   });
 
-  group('Saare levels', () {
-    test('kul 36 levels hain', () {
-      expect(allLevels.length, 36);
+  group('World 4 levels', () {
+    test('baarah levels valid hain', () {
+      expect(world4Levels.length, 12);
+      for (final level in world4Levels) {
+        final errors = level.validate(
+          worldWidth: WorldSize.width,
+          worldHeight: WorldSize.height,
+        );
+        expect(errors, isEmpty, reason: 'Level ${level.id}: $errors');
+      }
     });
 
-    test('worlds 2-3 ki levels worlds list mein hain', () {
-      expect(worlds[1].levels.length, 12);
-      expect(worlds[2].levels.length, 12);
-      expect(worlds[1].maxStars, 36);
-      expect(worlds[2].maxStars, 36);
+    test('tray design doc ke mutabiq hai', () {
+      expect(level37.trayCount(PieceType.road), 2);
+      expect(level37.trayCount(PieceType.ramp), 1);
+      expect(level38.trayCount(PieceType.road), 1);
+      expect(level38.tray.length, 1);
+      expect(level39.trayCount(PieceType.ramp), 1);
+      expect(level39.trayCount(PieceType.road), 1);
+      expect(level40.trayCount(PieceType.loop), 1);
+      expect(level40.trayCount(PieceType.booster), 1);
+      expect(level41.trayCount(PieceType.loop), 1);
+      expect(level41.trayCount(PieceType.bridge), 1);
+      expect(level42.trayCount(PieceType.road), 1);
+      expect(level42.trayCount(PieceType.booster), 1);
+      expect(level43.trayCount(PieceType.ramp), 2);
+      expect(level43.trayCount(PieceType.road), 1);
+      expect(level44.trayCount(PieceType.booster), 1);
+      expect(level44.trayCount(PieceType.ramp), 1);
+      expect(level45.trayCount(PieceType.loop), 2);
+      expect(level45.trayCount(PieceType.booster), 1);
+      expect(level46.trayCount(PieceType.loop), 1);
+      expect(level46.trayCount(PieceType.road), 2);
+      expect(level47.trayCount(PieceType.bridge), 1);
+      expect(level47.trayCount(PieceType.ramp), 1);
+      expect(level48.trayCount(PieceType.loop), 1);
+      expect(level48.trayCount(PieceType.booster), 1);
+      expect(level48.trayCount(PieceType.road), 2);
+      expect(level48.trayCount(PieceType.ramp), 1);
+    });
+
+    test('naam design doc ke mutabiq hain', () {
+      expect(level37.name, 'Rooftops');
+      expect(level38.name, 'The Lift');
+      expect(level39.name, 'Neon Alley');
+      expect(level40.name, 'Loop the Loop');
+      expect(level41.name, 'Loop + Landing');
+      expect(level42.name, 'Traffic Lights');
+      expect(level43.name, 'Parking Garage');
+      expect(level44.name, 'Billboard Jump');
+      expect(level45.name, 'Double Loop');
+      expect(level46.name, 'Rush Hour');
+      expect(level47.name, 'Blackout');
+      expect(level48.name, 'City Exam');
+    });
+
+    test('loop sirf Level 40 se unlock (World 4)', () {
+      expect(PieceType.loop.unlockLevel, 40);
+      expect(PieceType.loop.isImplemented, isTrue);
+    });
+
+    test('har level mein 3 coins hain', () {
+      for (final level in world4Levels) {
+        expect(level.coins.length, 3, reason: 'Level ${level.id}');
+      }
+    });
+
+    test('gold time positive aur munasib hai', () {
+      for (final level in world4Levels) {
+        expect(level.goldTimeSeconds, greaterThan(5));
+        expect(level.goldTimeSeconds, lessThan(60));
+      }
+    });
+
+    test('level ids 37-48 lagatar hain', () {
+      for (var i = 0; i < world4Levels.length; i++) {
+        expect(world4Levels[i].id, i + 37);
+        expect(world4Levels[i].world, 4);
+        expect(world4Levels[i].levelInWorld, i + 1);
+      }
+    });
+  });
+
+  group('World 5 levels', () {
+    test('baarah levels valid hain', () {
+      expect(world5Levels.length, 12);
+      for (final level in world5Levels) {
+        final errors = level.validate(
+          worldWidth: WorldSize.width,
+          worldHeight: WorldSize.height,
+        );
+        expect(errors, isEmpty, reason: 'Level ${level.id}: $errors');
+      }
+    });
+
+    test('tray design doc ke mutabiq hai', () {
+      expect(level49.trayCount(PieceType.road), 2);
+      expect(level49.trayCount(PieceType.ramp), 1);
+      expect(level50.trayCount(PieceType.spring), 1);
+      expect(level50.trayCount(PieceType.road), 1);
+      expect(level51.trayCount(PieceType.spring), 2);
+      expect(level51.trayCount(PieceType.road), 1);
+      expect(level52.trayCount(PieceType.road), 2);
+      expect(level52.trayCount(PieceType.bridge), 1);
+      expect(level53.trayCount(PieceType.ramp), 3);
+      expect(level53.tray.length, 1);
+      expect(level54.trayCount(PieceType.spring), 1);
+      expect(level54.trayCount(PieceType.road), 1);
+      expect(level55.trayCount(PieceType.spring), 1);
+      expect(level55.trayCount(PieceType.ramp), 1);
+      expect(level55.trayCount(PieceType.bridge), 1);
+      expect(level56.trayCount(PieceType.road), 2);
+      expect(level56.tray.length, 1);
+      expect(level57.trayCount(PieceType.bridge), 1);
+      expect(level57.trayCount(PieceType.spring), 1);
+      expect(level58.trayCount(PieceType.road), 2);
+      expect(level58.trayCount(PieceType.spring), 1);
+      expect(level59.trayCount(PieceType.ramp), 2);
+      expect(level59.trayCount(PieceType.spring), 1);
+      expect(level59.trayCount(PieceType.road), 1);
+      expect(level60.trayCount(PieceType.spring), 1);
+      expect(level60.trayCount(PieceType.bridge), 1);
+      expect(level60.trayCount(PieceType.ramp), 1);
+      expect(level60.trayCount(PieceType.road), 1);
+    });
+
+    test('naam design doc ke mutabiq hain', () {
+      expect(level49.name, 'Ruins Entrance');
+      expect(level50.name, 'Bounce!');
+      expect(level51.name, 'Double Bounce');
+      expect(level52.name, 'Falling Rocks');
+      expect(level53.name, 'Temple Steps');
+      expect(level54.name, 'The Well');
+      expect(level55.name, 'Vine Swing');
+      expect(level56.name, 'Crumble Stone');
+      expect(level57.name, 'Rock Rain');
+      expect(level58.name, 'Hidden Coins');
+      expect(level59.name, 'Temple Run');
+      expect(level60.name, 'Ruins Exam');
+    });
+
+    test('spring sirf Level 50 se unlock (World 5)', () {
+      expect(PieceType.spring.unlockLevel, 50);
+      expect(PieceType.spring.isImplemented, isTrue);
+    });
+
+    test('har level mein 3 coins hain', () {
+      for (final level in world5Levels) {
+        expect(level.coins.length, 3, reason: 'Level ${level.id}');
+      }
+    });
+
+    test('gold time positive aur munasib hai', () {
+      for (final level in world5Levels) {
+        expect(level.goldTimeSeconds, greaterThan(5));
+        expect(level.goldTimeSeconds, lessThan(60));
+      }
+    });
+
+    test('level ids 49-60 lagatar hain', () {
+      for (var i = 0; i < world5Levels.length; i++) {
+        expect(world5Levels[i].id, i + 49);
+        expect(world5Levels[i].world, 5);
+        expect(world5Levels[i].levelInWorld, i + 1);
+      }
+    });
+  });
+
+  group('World 6 levels', () {
+    test('baarah levels valid hain', () {
+      expect(world6Levels.length, 12);
+      for (final level in world6Levels) {
+        final errors = level.validate(
+          worldWidth: WorldSize.width,
+          worldHeight: WorldSize.height,
+        );
+        expect(errors, isEmpty, reason: 'Level ${level.id}: $errors');
+      }
+    });
+
+    test('tray design doc ke mutabiq hai', () {
+      expect(level61.trayCount(PieceType.ramp), 1);
+      expect(level61.trayCount(PieceType.road), 1);
+      expect(level62.trayCount(PieceType.magnet), 1);
+      expect(level62.trayCount(PieceType.road), 1);
+      expect(level63.trayCount(PieceType.ramp), 1);
+      expect(level63.tray.length, 1);
+      expect(level64.trayCount(PieceType.road), 1);
+      expect(level64.trayCount(PieceType.booster), 1);
+      expect(level65.trayCount(PieceType.magnet), 1);
+      expect(level65.tray.length, 1);
+      expect(level66.trayCount(PieceType.seesaw), 1);
+      expect(level66.tray.length, 1);
+      expect(level67.trayCount(PieceType.seesaw), 1);
+      expect(level67.trayCount(PieceType.ramp), 1);
+      expect(level68.trayCount(PieceType.seesaw), 1);
+      expect(level68.trayCount(PieceType.road), 1);
+      expect(level69.trayCount(PieceType.magnet), 2);
+      expect(level69.trayCount(PieceType.road), 1);
+      expect(level70.trayCount(PieceType.ramp), 1);
+      expect(level70.trayCount(PieceType.booster), 1);
+      expect(level71.trayCount(PieceType.road), 1);
+      expect(level71.trayCount(PieceType.ramp), 1);
+      expect(level72.trayCount(PieceType.magnet), 1);
+      expect(level72.trayCount(PieceType.seesaw), 1);
+      expect(level72.trayCount(PieceType.road), 1);
+      expect(level72.trayCount(PieceType.ramp), 1);
+    });
+
+    test('naam design doc ke mutabiq hain', () {
+      expect(level61.name, 'Zero-G');
+      expect(level62.name, 'Ceiling Drive');
+      expect(level63.name, 'Float and Drop');
+      expect(level64.name, 'Airlock');
+      expect(level65.name, 'Orbit');
+      expect(level66.name, 'Balance Point');
+      expect(level67.name, 'Tip and Launch');
+      expect(level68.name, 'Low-G Seesaw');
+      expect(level69.name, 'Gravity Flip');
+      expect(level70.name, 'Asteroid Field');
+      expect(level71.name, 'Docking Bay');
+      expect(level72.name, 'Station Exam');
+    });
+
+    test('magnet Level 61 aur see-saw Level 66 se unlock (World 6)', () {
+      expect(PieceType.magnet.unlockLevel, 61);
+      expect(PieceType.seesaw.unlockLevel, 66);
+      expect(PieceType.magnet.isImplemented, isTrue);
+      expect(PieceType.seesaw.isImplemented, isTrue);
+    });
+
+    test('har level mein 3 coins hain', () {
+      for (final level in world6Levels) {
+        expect(level.coins.length, 3, reason: 'Level ${level.id}');
+      }
+    });
+
+    test('gold time positive aur munasib hai', () {
+      for (final level in world6Levels) {
+        expect(level.goldTimeSeconds, greaterThan(5));
+        expect(level.goldTimeSeconds, lessThan(60));
+      }
+    });
+
+    test('level ids 61-72 lagatar hain', () {
+      for (var i = 0; i < world6Levels.length; i++) {
+        expect(world6Levels[i].id, i + 61);
+        expect(world6Levels[i].world, 6);
+        expect(world6Levels[i].levelInWorld, i + 1);
+      }
+    });
+  });
+
+  group('World 7 levels', () {
+    test('baarah levels valid hain', () {
+      expect(world7Levels.length, 12);
+      for (final level in world7Levels) {
+        final errors = level.validate(
+          worldWidth: WorldSize.width,
+          worldHeight: WorldSize.height,
+        );
+        expect(errors, isEmpty, reason: 'Level ${level.id}: $errors');
+      }
+    });
+
+    test('tray design doc ke mutabiq hai', () {
+      expect(level73.trayCount(PieceType.bridge), 1);
+      expect(level73.trayCount(PieceType.road), 1);
+      expect(level74.trayCount(PieceType.bridge), 1);
+      expect(level74.trayCount(PieceType.road), 1);
+      expect(level75.trayCount(PieceType.booster), 1);
+      expect(level75.trayCount(PieceType.road), 1);
+      expect(level76.trayCount(PieceType.road), 2);
+      expect(level76.trayCount(PieceType.ramp), 1);
+      expect(level77.trayCount(PieceType.bridge), 1);
+      expect(level77.trayCount(PieceType.ramp), 1);
+      expect(level77.trayCount(PieceType.booster), 1);
+      expect(level78.trayCount(PieceType.road), 1);
+      expect(level78.tray.length, 1);
+      expect(level79.trayCount(PieceType.loop), 1);
+      expect(level79.trayCount(PieceType.booster), 1);
+      expect(level80.trayCount(PieceType.ramp), 2);
+      expect(level80.trayCount(PieceType.spring), 1);
+      expect(level80.trayCount(PieceType.road), 1);
+      expect(level81.trayCount(PieceType.bridge), 1);
+      expect(level81.trayCount(PieceType.road), 2);
+      expect(level82.trayCount(PieceType.seesaw), 1);
+      expect(level82.trayCount(PieceType.road), 1);
+      expect(level83.trayCount(PieceType.bridge), 1);
+      expect(level83.trayCount(PieceType.booster), 1);
+      expect(level83.trayCount(PieceType.ramp), 1);
+      expect(level84.trayCount(PieceType.loop), 1);
+      expect(level84.trayCount(PieceType.bridge), 1);
+      expect(level84.trayCount(PieceType.booster), 1);
+      expect(level84.trayCount(PieceType.road), 1);
+    });
+
+    test('naam design doc ke mutabiq hain', () {
+      expect(level73.name, 'Lava Line');
+      expect(level74.name, 'Hot Bridge');
+      expect(level75.name, 'Gate Keeper');
+      expect(level76.name, 'Eruption');
+      expect(level77.name, 'Lava Run');
+      expect(level78.name, 'Cooling Rocks');
+      expect(level79.name, 'Double Gate Loop');
+      expect(level80.name, 'Rising Lava');
+      expect(level81.name, 'Ember Rain');
+      expect(level82.name, 'The Crucible');
+      expect(level83.name, 'Last Bridge');
+      expect(level84.name, 'Volcano Exam');
+    });
+
+    test('har level mein 3 coins hain', () {
+      for (final level in world7Levels) {
+        expect(level.coins.length, 3, reason: 'Level ${level.id}');
+      }
+    });
+
+    test('gold time positive aur munasib hai', () {
+      for (final level in world7Levels) {
+        expect(level.goldTimeSeconds, greaterThan(5));
+        expect(level.goldTimeSeconds, lessThan(60));
+      }
+    });
+
+    test('level ids 73-84 lagatar hain', () {
+      for (var i = 0; i < world7Levels.length; i++) {
+        expect(world7Levels[i].id, i + 73);
+        expect(world7Levels[i].world, 7);
+        expect(world7Levels[i].levelInWorld, i + 1);
+      }
+    });
+  });
+
+  group('World 8 levels', () {
+    test('baarah levels valid hain', () {
+      expect(world8Levels.length, 12);
+      for (final level in world8Levels) {
+        final errors = level.validate(
+          worldWidth: WorldSize.width,
+          worldHeight: WorldSize.height,
+        );
+        expect(errors, isEmpty, reason: 'Level ${level.id}: $errors');
+      }
+    });
+
+    test('tray design doc ke mutabiq hai', () {
+      expect(level85.trayCount(PieceType.bridge), 1);
+      expect(level85.trayCount(PieceType.road), 1);
+      expect(level85.trayCount(PieceType.ramp), 1);
+      expect(level86.trayCount(PieceType.ramp), 1);
+      expect(level86.tray.length, 1);
+      expect(level87.trayCount(PieceType.booster), 1);
+      expect(level87.trayCount(PieceType.ramp), 1);
+      expect(level88.trayCount(PieceType.road), 3);
+      expect(level88.trayCount(PieceType.spring), 1);
+      expect(level89.trayCount(PieceType.loop), 1);
+      expect(level89.trayCount(PieceType.booster), 1);
+      expect(level90.trayCount(PieceType.seesaw), 1);
+      expect(level90.trayCount(PieceType.road), 1);
+      expect(level91.trayCount(PieceType.magnet), 1);
+      expect(level91.trayCount(PieceType.ramp), 1);
+      expect(level92.trayCount(PieceType.booster), 1);
+      expect(level92.trayCount(PieceType.bridge), 1);
+      expect(level92.trayCount(PieceType.road), 1);
+      expect(level93.trayCount(PieceType.road), 1);
+      expect(level93.trayCount(PieceType.ramp), 1);
+      // L94: har piece ek dafa.
+      for (final type in PieceType.values) {
+        expect(level94.trayCount(type), 1, reason: 'L94: $type');
+      }
+      expect(level95.trayCount(PieceType.ramp), 1);
+      expect(level95.trayCount(PieceType.spring), 1);
+      // L96: fixed 6-piece tray (free-choice picker abhi nahi bana).
+      expect(level96.tray.length, 6);
+      expect(level96.trayCount(PieceType.loop), 1);
+      expect(level96.trayCount(PieceType.booster), 1);
+    });
+
+    test('naam design doc ke mutabiq hain', () {
+      expect(level85.name, 'First Island');
+      expect(level86.name, 'Tailwind');
+      expect(level87.name, 'Headwind');
+      expect(level88.name, 'Island Hop');
+      expect(level89.name, 'Cloud Loop');
+      expect(level90.name, 'Sky Seesaw');
+      expect(level91.name, 'Zero-G Sky');
+      expect(level92.name, 'Storm Run');
+      expect(level93.name, 'Almost Nothing II');
+      expect(level94.name, 'Every Piece');
+      expect(level95.name, 'The Long Fall');
+      expect(level96.name, 'Master Builder');
+    });
+
+    test('har level mein 3 coins hain', () {
+      for (final level in world8Levels) {
+        expect(level.coins.length, 3, reason: 'Level ${level.id}');
+      }
+    });
+
+    test('gold time positive aur munasib hai', () {
+      for (final level in world8Levels) {
+        expect(level.goldTimeSeconds, greaterThan(5));
+        expect(level.goldTimeSeconds, lessThan(60));
+      }
+    });
+
+    test('level ids 85-96 lagatar hain', () {
+      for (var i = 0; i < world8Levels.length; i++) {
+        expect(world8Levels[i].id, i + 85);
+        expect(world8Levels[i].world, 8);
+        expect(world8Levels[i].levelInWorld, i + 1);
+      }
+    });
+  });
+
+  group('Saare levels', () {
+    test('kul 96 levels hain', () {
+      expect(allLevels.length, 96);
+    });
+
+    test('worlds 2-8 ki levels worlds list mein hain', () {
+      for (var i = 1; i < 8; i++) {
+        expect(worlds[i].levels.length, 12, reason: 'World ${i + 1}');
+        expect(worlds[i].maxStars, 36, reason: 'World ${i + 1}');
+      }
     });
   });
 }

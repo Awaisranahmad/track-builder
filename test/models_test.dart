@@ -9,15 +9,16 @@ import 'package:track_builder/data/models/player_progress.dart';
 
 void main() {
   group('PieceType', () {
-    test('road, ramp, bridge aur booster Phase 3 mein implemented hain', () {
+    test('road, ramp, bridge, booster, loop, spring, see-saw aur magnet '
+        'Phase 5 mein implemented hain', () {
       expect(PieceType.road.isImplemented, isTrue);
       expect(PieceType.ramp.isImplemented, isTrue);
       expect(PieceType.bridge.isImplemented, isTrue);
       expect(PieceType.booster.isImplemented, isTrue);
-      expect(PieceType.loop.isImplemented, isFalse);
-      expect(PieceType.spring.isImplemented, isFalse);
-      expect(PieceType.seesaw.isImplemented, isFalse);
-      expect(PieceType.magnet.isImplemented, isFalse);
+      expect(PieceType.loop.isImplemented, isTrue);
+      expect(PieceType.spring.isImplemented, isTrue);
+      expect(PieceType.seesaw.isImplemented, isTrue);
+      expect(PieceType.magnet.isImplemented, isTrue);
     });
 
     test('unlock levels design doc ke mutabiq hain', () {
@@ -195,12 +196,14 @@ void main() {
       expect(starterBug.stability, 5);
     });
 
-    test('5 gariyan hain — design doc ke mutabiq qeematein', () {
-      expect(allCars.length, 5);
+    test('6 gariyan hain — 5 khareedne wali + Master Builder (Level 96)', () {
+      expect(allCars.length, 6);
       expect(carById('desert_pickup')?.priceCoins, 300);
       expect(carById('snow_rally')?.priceCoins, 600);
       expect(carById('city_racer')?.priceCoins, 1000);
       expect(carById('rocket_van')?.priceCoins, 1800);
+      // Master Builder khareedi nahi ja sakti — Level 96 jeetne par milti hai.
+      expect(carById('master_builder')?.unlockLevelId, 96);
       expect(carById('nahi_hai'), isNull);
     });
 

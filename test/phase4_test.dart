@@ -258,13 +258,20 @@ void main() {
   });
 
   group('Hints', () {
-    test('solution data — 36 levels, har step tray mein, duniya ke andar',
+    test('solution data — 96 levels, har step tray mein, duniya ke andar',
         () {
-      expect(levelSolutions.length, 36);
-      for (var id = 1; id <= 36; id++) {
+      expect(levelSolutions.length, 96);
+      // Ye 4 levels bina piece lagaye pass hote hain (tray spare hai) —
+      // un ka solution khaali rehta hai, hint kuch nahi dikhata.
+      const noBuildLevels = {38, 42, 56, 64};
+      for (var id = 1; id <= 96; id++) {
         final level = levelById(id)!;
         final steps = levelSolutions[id];
         expect(steps, isNotNull, reason: 'Level $id ka solution nahi');
+        if (noBuildLevels.contains(id)) {
+          expect(steps, isEmpty, reason: 'Level $id: no-build level hai');
+          continue;
+        }
         expect(steps, isNotEmpty);
         for (final step in steps!) {
           expect(
