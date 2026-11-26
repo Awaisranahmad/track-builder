@@ -5,27 +5,33 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import '../../data/levels/worlds.dart';
 import '../../data/models/level_data.dart';
 import '../../data/models/piece_type.dart';
 import '../../data/models/player_progress.dart';
 import '../../data/save_service.dart';
 import '../../game/track_builder_game.dart';
+import '../../services/ads_service.dart';
 import '../overlays/result_overlay.dart';
 import '../widgets/hold_button.dart';
 import '../widgets/timer_text.dart';
 import '../widgets/tray_chip.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({
+  GameScreen({
     super.key,
     required this.level,
     required this.progress,
     required this.saveService,
-  });
+    AdsService? ads,
+  }) : ads = ads ?? adsService;
 
   final LevelData level;
   final PlayerProgress progress;
   final SaveService saveService;
+
+  /// Ads — default app ka shared service; tests mein testMode wala do.
+  final AdsService ads;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -42,6 +48,7 @@ class _GameScreenState extends State<GameScreen> {
       level: widget.level,
       progress: widget.progress,
       saveService: widget.saveService,
+      ads: widget.ads,
     );
   }
 
@@ -65,6 +72,52 @@ class _GameScreenState extends State<GameScreen> {
       Vector2(details.offset.dx, details.offset.dy),
     );
     _game.buildManager.placeAt(worldPos, details.data);
+    setState(() {});
+  }
+
+  Future<void> _onHintPressed() async {
+    // Hint baaki ho to foran istemal karo.
+    if (_game.hintsLeft > 0) {
+      final shown = _game.useHint();
+      if (shown) {
+        setState(() {});
+        return;
+      }
+    }
+    // Koi hint nahi — rewarded ad se +1 hint.
+    final watch = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('No hints left'),
+        content: const Text(
+          'Ek chhota sa ad dekho aur +1 hint pao — ghost solution '
+          'agle piece ki jagah dikhayega.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Watch Ad'),
+          ),
+        ],
+      ),
+    );
+    if (watch != true || !mounted) return;
+    final rewarded = await widget.ads.showRewarded(placement: 'hint');
+    if (!mounted) return;
+    if (!rewarded) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ad abhi tayyar nahi — baad mein try karo')),
+      );
+      return;
+    }
+    widget.progress.grantHint();
+    await widget.saveService.saveProgress(widget.progress);
+    _game.useHint();
+    if (!mounted) return;
     setState(() {});
   }
 
@@ -133,6 +186,11 @@ class _GameScreenState extends State<GameScreen> {
                 },
                 onNext: () {
                   final next = widget.level.id + 1;
+                  if (levelById(next) == null) {
+                    // Aakhri level — wapas Level Select par.
+                    Navigator.of(context).pop();
+                    return;
+                  }
                   Navigator.of(context).pushReplacementNamed(
                     '/game',
                     arguments: next,
@@ -268,6 +326,21 @@ class _GameScreenState extends State<GameScreen> {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 12,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Hint — ghost solution dikhata hai (ad se +1 jab khatam hon).
+            OutlinedButton.icon(
+              onPressed: _onHintPressed,
+              icon: const Icon(Icons.lightbulb, size: 18),
+              label: Text('Hint (${_game.hintsLeft})'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(color: Colors.white70),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
                 ),
               ),
             ),

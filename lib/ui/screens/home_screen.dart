@@ -1,10 +1,13 @@
-// Home Screen — Phase 1 mein simple level list.
-// Phase 2 mein ye World Map ban jayega.
+// Home Screen — game ki pehli shakal.
+// Play → World Map. Stars/coins upar. Garage aur Settings
+// Phase 3 mein ban gaye — ab asli screens khulti hain.
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-import '../../data/levels/world1_levels.dart';
 import '../../data/models/player_progress.dart';
 import '../../data/save_service.dart';
+import '../../services/audio_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
@@ -27,14 +30,16 @@ class HomeScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
               'Build the track. Then drive it.',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.star, color: Colors.amber),
                 Text(' ${progress.totalStars} stars'),
@@ -43,47 +48,50 @@ class HomeScreen extends StatelessWidget {
                 Text(' ${progress.totalCoins} coins'),
               ],
             ),
-            const SizedBox(height: 24),
-            const Text(
-              'World 1 — Green Hills',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: ListView.builder(
-                itemCount: world1Levels.length,
-                itemBuilder: (context, index) {
-                  final level = world1Levels[index];
-                  final stars = progress.starsForLevel(level.id);
-                  final unlocked = progress.isLevelUnlocked(level.id);
-                  return Card(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        child: Text('${level.id}'),
-                      ),
-                      title: Text(level.name),
-                      subtitle: Row(
-                        children: List.generate(3, (i) {
-                          return Icon(
-                            i < stars ? Icons.star : Icons.star_border,
-                            color: Colors.amber,
-                            size: 18,
-                          );
-                        }),
-                      ),
-                      trailing: unlocked
-                          ? const Icon(Icons.play_arrow)
-                          : const Icon(Icons.lock),
-                      onTap: unlocked
-                          ? () => Navigator.of(context).pushNamed(
-                                '/game',
-                                arguments: level.id,
-                              )
-                          : null,
-                    ),
-                  );
-                },
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () {
+                unawaited(audioService.playSfx('click'));
+                Navigator.of(context).pushNamed('/worlds');
+              },
+              icon: const Icon(Icons.play_arrow, size: 32),
+              label: const Text(
+                'Play',
+                style: TextStyle(fontSize: 24),
               ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 20),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/garage'),
+                    icon: const Icon(Icons.directions_car),
+                    label: const Text('Garage'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/settings'),
+                    icon: const Icon(Icons.settings),
+                    label: const Text('Settings'),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            const Text(
+              'World 1-3: 36 levels — Green Hills, Desert, Snow',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
             ),
           ],
         ),
