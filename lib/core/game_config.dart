@@ -6,14 +6,14 @@ import 'constants.dart';
 /// Game ki poori configuration — ek object, har jagah se istemal hota hai.
 class GameConfig {
   const GameConfig({
-    this.gravity = const _Gravity(),
+    this.gravity = const Gravity(),
     this.viewWidth = WorldSize.width,
     this.viewHeight = WorldSize.height,
     this.goldTimeSlackSeconds = 0.0,
   });
 
   /// Duniya ki gravity.
-  final _Gravity gravity;
+  final Gravity gravity;
 
   /// Camera viewport ki chaudai (metre).
   final double viewWidth;
@@ -28,8 +28,10 @@ class GameConfig {
   static const GameConfig def = GameConfig();
 }
 
-class _Gravity {
-  const _Gravity();
+/// Duniya ki gravity — public hai kyunki GameConfig (public API) is ko
+/// expose karta hai; private type yahan analyzer ko pasand nahi.
+class Gravity {
+  const Gravity();
 
   Vector2 get value => Vector2(0, PhysicsValues.gravityY);
 }
