@@ -21,12 +21,16 @@ class SpritePaths {
   static const String ramp = 'pieces/ramp.png';
   static const String bridge = 'pieces/bridge.png';
   static const String booster = 'pieces/booster.png';
+  static const String loop = 'pieces/loop.png';
+  static const String spring = 'pieces/spring.png';
+  static const String seesaw = 'pieces/seesaw.png';
+  static const String magnet = 'pieces/magnet.png';
   static const String coin = 'ui/coin.png';
   static const String flag = 'ui/flag.png';
   static const String smoke = 'effects/smoke.png';
   static const String spark = 'effects/spark.png';
 
-  /// World 1-3 ka background — baaki worlds Phase 5 mein.
+  /// World 1-8 ka background — Phase 5 mein saare 8.
   static String background(int world) => 'backgrounds/bg_world$world.png';
 }
 
@@ -102,9 +106,13 @@ class SpriteService {
       SpritePaths.ramp,
       SpritePaths.bridge,
       SpritePaths.booster,
+      SpritePaths.loop,
+      SpritePaths.spring,
+      SpritePaths.seesaw,
+      SpritePaths.magnet,
       SpritePaths.coin,
       SpritePaths.flag,
-      for (var w = 1; w <= 3; w++) SpritePaths.background(w),
+      for (var w = 1; w <= 8; w++) SpritePaths.background(w),
       SpritePaths.smoke,
       SpritePaths.spark,
     ];
